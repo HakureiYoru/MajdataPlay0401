@@ -18,6 +18,7 @@ namespace MajdataPlay
     public class StoryManager : MonoBehaviour
     {
         public VideoPlayer StoryVideo;
+        public VideoPlayer NukeVideo;
         public SpriteRenderer VideoRender;
         public TextMeshProUGUI DialogText;
         public TextMeshProUGUI NameText;
@@ -33,7 +34,7 @@ namespace MajdataPlay
             DialogWindow.color = new Color(1, 1, 1, 0);
             NameWindow.color = new Color(1, 1, 1, 0);
             program = File.ReadAllLines(Application.streamingAssetsPath + "/story.txt");
-            
+            NukeVideo.gameObject.SetActive(false);
             start().Forget();
         }
 
@@ -77,7 +78,9 @@ namespace MajdataPlay
             {
                 var line = program[pc];
                 if (line == "") continue;
-                if (line.StartsWith("选项")) continue;
+                if (line.StartsWith("选项")){ 
+                    continue; 
+                }
                 if (line.StartsWith("NUKE")) { 
                     await Nuke();
                     Application.Quit();
@@ -98,13 +101,13 @@ namespace MajdataPlay
                 voice.Play();
                 for (int i = 0; i < text.Length; i++)
                 {
-                    DialogText.text += text[i];
-
                     if (text[i] == '颰')
                     {
                         await Nuke();
                         continue;
                     }
+
+                    DialogText.text += text[i];
 
                     if (name == "小小蓝白")
                     {
@@ -136,9 +139,13 @@ namespace MajdataPlay
 
         async UniTask Nuke()
         {
-            MajInstances.AudioManager.PlaySFX("bgm_explosion.mp3");
-            //TODO: Play video effect here
+            NukeVideo.gameObject.SetActive(true);
+            MajInstances.AudioManager.PlaySFX("爆.mp3");
+            NukeVideo.Play();
             await UniTask.WaitForSeconds(2);
+            NukeVideo.Stop();
+            NukeVideo.time = 0;
+            NukeVideo.gameObject.SetActive(false);
         }
     }
 }
