@@ -1,8 +1,10 @@
 using Cysharp.Threading.Tasks;
+using MajdataPlay.IO;
 using MajdataPlay.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using TMPro;
@@ -22,7 +24,7 @@ namespace MajdataPlay
         public Image Character;
         public Image DialogWindow;
         public Image NameWindow;
-
+        string[] program;
         void Start()
         {
             NameText.text = "";
@@ -30,6 +32,8 @@ namespace MajdataPlay
             Character.color = new Color(1, 1, 1, 0);
             DialogWindow.color = new Color(1, 1, 1, 0);
             NameWindow.color = new Color(1, 1, 1, 0);
+            program = File.ReadAllLines(Application.streamingAssetsPath + "/story.txt");
+            
             start().Forget();
         }
 
@@ -56,6 +60,7 @@ namespace MajdataPlay
             var bgm = MajInstances.AudioManager.GetSFX("bgm_story.mp3");
             bgm.IsLoop = true;
             bgm.Play();
+            bgm.Volume = 0.7f;
 
             //UI fade in
             for (float i = 1; i > 0; i = i - 0.0625f)
@@ -63,16 +68,30 @@ namespace MajdataPlay
                 Character.color = new Color(1, 1, 1, 1 - i);
                 await UniTask.Delay(120);
             }
-            DialogWindow.color = new Color(1, 1, 1, 1);
-            NameWindow.color = new Color(1, 1, 1, 1);
+            DialogWindow.color = new Color(1, 1, 1, 0.8f);
+            NameWindow.color = new Color(1, 1, 1, 0.8f);
 
 
             var voice = MajInstances.AudioManager.GetSFX("random.mp3");
-            while (true)
+            for (int pc = 0; pc < program.Length; pc++)
             {
-                //TODO: Deserialize here
-                string name = "dydy";
-                string text = "大家好啊 我是说的道理 今天来点大家想看的东西啊 啊啊啊米浴说的道 ↓ 理↑";
+                var line = program[pc];
+                if (line == "") continue;
+                if (line.StartsWith("选项")) continue;
+                if (line.StartsWith("NUKE")) { 
+                    await Nuke();
+                    Application.Quit();
+                    return;
+                }
+                var parts = line.Split("|");
+                if (parts[1] !="null")
+                {
+                    Character.color = new Color(1, 1, 1, 1);
+                    //TODO: switch sprite here
+                }
+
+                string name = parts[0];
+                string text = parts[2];
 
                 NameText.text = name;
                 DialogText.text = "";
@@ -80,21 +99,46 @@ namespace MajdataPlay
                 for (int i = 0; i < text.Length; i++)
                 {
                     DialogText.text += text[i];
-                    var byt = BitConverter.GetBytes(text[i]).FirstOrDefault();
-                    var pos = ((double)byt / (double)byte.MaxValue);
-                    var start = pos * voice.Length.TotalSeconds;
-                    voice.CurrentSec = start;
-                    await UniTask.Delay(50);
+
+                    if (text[i] == '颰')
+                    {
+                        await Nuke();
+                        continue;
+                    }
+
+                    if (name == "小小蓝白")
+                    {
+                        voice.Play();
+                        var byt = BitConverter.GetBytes(text[i]).FirstOrDefault();
+                        var pos = ((double)byt / (double)byte.MaxValue);
+                        var start = pos * voice.Length.TotalSeconds;
+                        voice.CurrentSec = start;
+                        await UniTask.Delay(50);
+                        voice.Stop();
+                    }
+                    else
+                    {
+                        MajInstances.AudioManager.PlaySFX("pop.mp3");
+                        await UniTask.Delay(50);
+                    }
+
+                    
                 }
-                voice.Stop();
-                //TODO: Waitkey
-                await UniTask.Delay(2000);
+                //waitkey
+                MajInstances.LightManager.SetButtonLight(Color.green, 3);
+                while (!InputManager.CheckButtonStatus(Types.SensorArea.A4, Types.SensorStatus.On))
+                {
+                    await UniTask.Yield();
+                }
+                MajInstances.LightManager.SetButtonLight(Color.white, 3);
             }
         }
 
         async UniTask Nuke()
         {
-            Application.Quit();
+            MajInstances.AudioManager.PlaySFX("bgm_explosion.mp3");
+            //TODO: Play video effect here
+            await UniTask.WaitForSeconds(2);
         }
     }
 }
