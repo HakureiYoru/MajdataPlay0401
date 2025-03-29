@@ -26,7 +26,7 @@ namespace MajdataPlay.Collections
         public ChartStorageLocation Location { get; init; } = ChartStorageLocation.Local;
         public ChartStorageType Type { get; init; } = ChartStorageType.List;
         public bool IsOnline => Location == ChartStorageLocation.Online;
-        public string Name { get; private set; }
+        public string Name { get; set; }
         public bool IsSorted { get; private set; } = false;
         public int Count => _sorted.Length;
         public bool IsEmpty => _sorted.Length == 0;

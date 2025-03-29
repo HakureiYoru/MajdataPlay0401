@@ -199,6 +199,12 @@ namespace MajdataPlay.Utils
                         MajDebug.Log("Loaded Dan:" + collection.DanInfo?.Name ?? collection.Name);
                     }
                 }
+                if(Directory.Exists(Path.Combine(MajEnv.AppDataPath, "0401")))
+                {
+                    var c = await GetCollection(Path.Combine(MajEnv.AppDataPath, "0401"));
+                    c.Name = "Story";
+                    collections.Add(c);
+                }
                 return collections.ToArray();
             }
             catch(Exception e)

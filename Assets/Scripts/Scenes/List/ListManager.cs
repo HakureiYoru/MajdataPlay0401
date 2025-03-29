@@ -168,6 +168,12 @@ namespace MajdataPlay.List
                             }
                             else
                             {
+                                var selectedSong = _coverListDisplayer.SelectedSong;
+                                if (selectedSong is SongDetail sd && !sd.IsUnlocked)
+                                {
+                                    MajInstances.SceneSwitcher.SwitchScene("Unlock", false);
+                                    return;
+                                }
                                 InputManager.UnbindAnyArea(OnAreaDown);
                                 MajInstances.AudioManager.StopSFX("bgm_select.mp3");
                                 var list = new string[] { "track_start.wav", "track_start_2.wav" };

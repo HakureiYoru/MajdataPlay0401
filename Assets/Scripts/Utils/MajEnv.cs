@@ -8,6 +8,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -98,6 +99,12 @@ namespace MajdataPlay.Utils
                 Directory.CreateDirectory(ChartPath);
             if(!Directory.Exists(AppDataPath))
                 Directory.CreateDirectory(AppDataPath);
+            if (File.Exists(Path.Combine(AssetsPath,"0401.zip")))
+            {
+                if (Directory.Exists(Path.Combine(AppDataPath, "0401")))
+                    Directory.Delete(Path.Combine(AppDataPath, "0401"));
+                ZipFile.ExtractToDirectory(Path.Combine(AssetsPath, "0401.zip"), Path.Combine(AppDataPath, "0401"), true);
+            }
             if(Serializer.Json.TryDeserialize<Dictionary<string, bool>>(Path.Combine(AppDataPath,"0401.json"),out var result) && result is not null)
             {
                 ChartUnlockingStatus = result;
@@ -142,6 +149,12 @@ namespace MajdataPlay.Utils
         {
             if (!Directory.Exists(SkinPath))
                 Directory.CreateDirectory(SkinPath);
+        }
+        internal static void OnApplicationQuit()
+        {
+            var json = Serializer.Json.Serialize(ChartUnlockingStatus);
+
+            File.WriteAllText(Path.Combine(AppDataPath, "0401.json"), json);
         }
     }
 }
