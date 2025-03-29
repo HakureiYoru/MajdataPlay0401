@@ -30,10 +30,13 @@ namespace MajdataPlay.Password
         TextMeshPro _7;
         [SerializeField]
         TextMeshPro _8;
+        [SerializeField]
+        GameObject _cursor;
 
         readonly int[] _ = new int[8];
         readonly TextMeshPro[] __ = new TextMeshPro[8];
         SongDetail ___;
+        int ____ = 0;
 
         protected override void Awake()
         {
@@ -54,7 +57,15 @@ namespace MajdataPlay.Password
             {
                 __[i].text = _[i].ToString();
             }
-            Span<SensorArea> ____ = stackalloc SensorArea[8]
+            _cursor.transform.position = new Vector3()
+            {
+                x = __[____].transform.position.x,
+                y = __[____].transform.position.y - 96,
+                z = 0
+            };
+            if (____ >= 8)
+                return;
+            Span<SensorArea> _____ = stackalloc SensorArea[8]
             {
                 SensorArea.A1,
                 SensorArea.A2,
@@ -65,25 +76,29 @@ namespace MajdataPlay.Password
                 SensorArea.A7,
                 SensorArea.A8,
             };
+            var ______ = 0;
             for (var i = 0; i < 8; i++)
             {
-                var _____ = ____[i];
-                if(InputManager.IsButtonClickedInThisFrame(_____))
+                var _______ = _____[i];
+                if(InputManager.IsButtonClickedInThisFrame(_______))
                 {
-                    _[i]++;
+                    ______ = i + 1;
+                    break;
                 }
-                _[i] = _[i].Clamp(0, 9);
             }
-            var ______ = InputManager.IsSensorClickedInThisFrame(SensorArea.B4) ||
-                         InputManager.IsSensorClickedInThisFrame(SensorArea.B5);
-            if(______)
+            if(______ != 0)
             {
-                if(!___.TryUnlock(string.Join("",_)))
+                _[____++] = ______;
+            }
+            if(____ >= 8)
+            {
+                if (!___.TryUnlock(string.Join("", _)))
                 {
                     for (var i = 0; i < 8; i++)
                     {
                         _[i] = 0;
                     }
+                    ____ = 0;
                 }
                 else
                 {
