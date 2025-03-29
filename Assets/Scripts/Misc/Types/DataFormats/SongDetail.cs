@@ -4,6 +4,7 @@ using MajdataPlay.Utils;
 using MajSimai;
 using NeoSmart.AsyncLock;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -15,11 +16,12 @@ namespace MajdataPlay.Types
 
     public class SongDetail : ISongDetail
     {
-        public string Title { get; init; } = string.Empty;
-        public string Artist { get; init; } = string.Empty;
-        public string[] Designers { get; init; } = new string[7];
-        public string Description { get; init; } = string.Empty;
-        public string[] Levels { get; init; } = new string[7];
+        public bool IsUnlocked { get; private set; } = true;
+        public string Title { get; private set; } = string.Empty;
+        public string Artist { get; private set; } = string.Empty;
+        public string[] Designers { get; private set; } = new string[7];
+        public string Description { get; private set; } = string.Empty;
+        public string[] Levels { get; private set; } = new string[7];
         public string Hash { get; init; } = string.Empty;
         public DateTime Timestamp { get; init; }
         public ChartStorageLocation Location => ChartStorageLocation.Local;
@@ -28,6 +30,8 @@ namespace MajdataPlay.Types
         protected readonly string _trackPath = string.Empty;
         protected readonly string _videoPath = string.Empty;
         protected readonly string _coverPath = string.Empty;
+
+        protected readonly string _pAssWoRd = string.Empty;
 
         protected AudioSampleWrap? _audioTrack = null;
         protected AudioSampleWrap? _previewAudioTrack = null;
@@ -42,11 +46,17 @@ namespace MajdataPlay.Types
 
         protected readonly Func<Task> _preloadCallback;
 
-        protected SongDetail()
+        readonly SimaiMetadata _metadata;
+
+        readonly static IReadOnlyDictionary<string, string> _pAssWoRdSsssssssssssSSSSSSSssssssssssssss = new Dictionary<string, string>()
         {
-            _preloadCallback = async () => { await UniTask.WhenAll(GetMaidataAsync(), GetCoverAsync(true)); };
-        }
-        public SongDetail(string chartFolder, SimaiMetadata metadata) : this()
+            //Hash Passwd
+            { "sb", "bs" },
+            { "sb", "bs" },
+            { "sb", "bs" },
+            { "sb", "bs" },
+        };
+        public SongDetail(string chartFolder, SimaiMetadata metadata)
         {
             var files = new DirectoryInfo(chartFolder).GetFiles();
 
@@ -58,13 +68,45 @@ namespace MajdataPlay.Types
 
             if (string.IsNullOrEmpty(_coverPath))
                 _cover = MajEnv.EmptySongCover;
-            
+            _metadata = metadata;
             Title = metadata.Title;
             Artist = metadata.Artist;
             Designers = metadata.Designers;
             Levels = metadata.Levels;
             Hash = metadata.Hash;
             Timestamp = files.FirstOrDefault(x => x.Name is "maidata.txt")?.LastWriteTime ?? DateTime.UnixEpoch;
+            _preloadCallback = async () => { await UniTask.WhenAll(GetMaidataAsync(), GetCoverAsync(true)); };
+
+            if(MajEnv.ChartUnlockingStatus.TryGetValue(Hash,out var isUnlocked))
+            {
+                IsUnlocked = isUnlocked;
+                _pAssWoRd = _pAssWoRdSsssssssssssSSSSSSSssssssssssssss[Hash];
+                if(!IsUnlocked)
+                {
+                    Title = "???";
+                    Artist = "???";
+                    Designers = new string[7]
+                    {
+                        "???",
+                        "???",
+                        "???",
+                        "???",
+                        "???",
+                        "???",
+                        "???",
+                    };
+                    Levels = new string[7]
+                    {
+                        "?",
+                        "?",
+                        "?",
+                        "?",
+                        "?",
+                        "?",
+                        "?",
+                    };
+                }
+            }
         }
         public static async Task<SongDetail> ParseAsync(string chartFolder)
         {
@@ -99,6 +141,8 @@ namespace MajdataPlay.Types
                     token.ThrowIfCancellationRequested();
                     if (_cover is not null)
                         return _cover;
+                    else if (!IsUnlocked)
+                        return MajEnv.LockedSongCover;
 
                     _cover = await SpriteLoader.LoadAsync(_coverPath, token);
                     return _cover;
@@ -137,6 +181,8 @@ namespace MajdataPlay.Types
                     token.ThrowIfCancellationRequested();
                     if (_previewAudioTrack is not null)
                         return _previewAudioTrack;
+                    else if (!IsUnlocked)
+                        return EmptyAudioSample.Shared;
 
                     _previewAudioTrack = await MajInstances.AudioManager.LoadMusicAsync(_trackPath, false);
                     return _previewAudioTrack;
@@ -164,6 +210,28 @@ namespace MajdataPlay.Types
             finally
             {
                 await UniTask.Yield();
+            }
+        }
+        public bool TryUnlock(string passwd)
+        {
+        THIS_IS_A_LABEL:
+            if (IsUnlocked)
+            {
+                Title = _metadata.Title;
+                Artist = _metadata.Artist;
+                Designers = _metadata.Designers;
+                Levels = _metadata.Levels;
+                return true;
+            }
+            else if (passwd == _pAssWoRd)
+            {
+                IsUnlocked = true;
+                MajEnv.ChartUnlockingStatus[Hash] = true;
+                goto THIS_IS_A_LABEL;
+            }
+            else
+            {
+                return false;
             }
         }
     }
