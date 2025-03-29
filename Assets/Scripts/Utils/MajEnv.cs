@@ -49,6 +49,7 @@ namespace MajdataPlay.Utils
             { "", false },
         };
         public static Sprite EmptySongCover { get; }
+        public static Sprite LockedSongCover { get; }
         public static Material BreakMaterial { get; }
         public static Material DefaultMaterial { get; }
         public static Material HoldShineMaterial { get; }

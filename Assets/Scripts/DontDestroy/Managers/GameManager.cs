@@ -51,6 +51,8 @@ namespace MajdataPlay
         [SerializeField]
         Sprite _emptySongCover;
         [SerializeField]
+        Sprite _lockedSongCover;
+        [SerializeField]
         Material _holdShineMaterial;
         [SerializeField]
         Material _breakMaterial;
@@ -123,6 +125,8 @@ namespace MajdataPlay
 
             envType.GetField("<EmptySongCover>k__BackingField", BindingFlags.Static | BindingFlags.NonPublic)
                    .SetValue(null, _emptySongCover);
+            envType.GetField("<LockedSongCover>k__BackingField", BindingFlags.Static | BindingFlags.NonPublic)
+                   .SetValue(null, _lockedSongCover);
             envType.GetField("<BreakMaterial>k__BackingField", BindingFlags.Static | BindingFlags.NonPublic)
                    .SetValue(null, _breakMaterial);
             envType.GetField("<DefaultMaterial>k__BackingField", BindingFlags.Static | BindingFlags.NonPublic)
