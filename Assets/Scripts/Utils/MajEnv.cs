@@ -44,10 +44,10 @@ namespace MajdataPlay.Utils
         public static Dictionary<string, bool> ChartUnlockingStatus { get; } = new()
         {
             //Hash isUnlocked
-            { "", false },
-            { "", false },
-            { "", false },
-            { "", false },
+            { "0", false },
+            { "1", false },
+            { "2", false },
+            { "3", false },
         };
         public static Sprite EmptySongCover { get; }
         public static Sprite LockedSongCover { get; }
@@ -102,10 +102,10 @@ namespace MajdataPlay.Utils
             if (File.Exists(Path.Combine(AssetsPath,"0401.zip")))
             {
                 if (Directory.Exists(Path.Combine(AppDataPath, "0401")))
-                    Directory.Delete(Path.Combine(AppDataPath, "0401"));
+                    Directory.Delete(Path.Combine(AppDataPath, "0401"), true);
                 ZipFile.ExtractToDirectory(Path.Combine(AssetsPath, "0401.zip"), Path.Combine(AppDataPath, "0401"), true);
             }
-            if(Serializer.Json.TryDeserialize<Dictionary<string, bool>>(Path.Combine(AppDataPath,"0401.json"),out var result) && result is not null)
+            if(Serializer.Json.TryDeserialize<Dictionary<string, bool>>(File.ReadAllText(Path.Combine(AppDataPath, "0401.json")),out var result) && result is not null)
             {
                 ChartUnlockingStatus = result;
             }

@@ -51,10 +51,10 @@ namespace MajdataPlay.Types
         readonly static IReadOnlyDictionary<string, string> _pAssWoRdSsssssssssssSSSSSSSssssssssssssss = new Dictionary<string, string>()
         {
             //Hash Passwd
-            { "sb", "bs" },
-            { "sb", "bs" },
-            { "sb", "bs" },
-            { "sb", "bs" },
+            { "sb0", "0bs" },
+            { "sb1", "1bs" },
+            { "sb2", "2bs" },
+            { "sb3", "3bs" },
         };
         public SongDetail(string chartFolder, SimaiMetadata metadata)
         {
