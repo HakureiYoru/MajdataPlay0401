@@ -24,24 +24,29 @@ namespace MajdataPlay.Types
         public DateTime Timestamp { get; init; }
         public ChartStorageLocation Location => ChartStorageLocation.Local;
 
-        readonly string _maidataPath = string.Empty;
-        readonly string _trackPath = string.Empty;
-        readonly string _videoPath = string.Empty;
-        readonly string _coverPath = string.Empty;
+        protected readonly string _maidataPath = string.Empty;
+        protected readonly string _trackPath = string.Empty;
+        protected readonly string _videoPath = string.Empty;
+        protected readonly string _coverPath = string.Empty;
 
-        AudioSampleWrap? _audioTrack = null;
-        AudioSampleWrap? _previewAudioTrack = null;
-        Sprite? _cover = null;
-        SimaiFile? _maidata = null;
+        protected AudioSampleWrap? _audioTrack = null;
+        protected AudioSampleWrap? _previewAudioTrack = null;
+        protected Sprite? _cover = null;
+        protected SimaiFile? _maidata = null;
 
-        readonly AsyncLock _previewAudioTrackLock = new();
-        readonly AsyncLock _audioTrackLock = new();
-        readonly AsyncLock _coverLock = new();
-        readonly AsyncLock _maidataLock = new();
-        readonly AsyncLock _preloadLock = new();
+        protected readonly AsyncLock _previewAudioTrackLock = new();
+        protected readonly AsyncLock _audioTrackLock = new();
+        protected readonly AsyncLock _coverLock = new();
+        protected readonly AsyncLock _maidataLock = new();
+        protected readonly AsyncLock _preloadLock = new();
 
-        readonly Func<Task> _preloadCallback;
-        public SongDetail(string chartFolder, SimaiMetadata metadata)
+        protected readonly Func<Task> _preloadCallback;
+
+        protected SongDetail()
+        {
+            _preloadCallback = async () => { await UniTask.WhenAll(GetMaidataAsync(), GetCoverAsync(true)); };
+        }
+        public SongDetail(string chartFolder, SimaiMetadata metadata) : this()
         {
             var files = new DirectoryInfo(chartFolder).GetFiles();
 
@@ -60,7 +65,6 @@ namespace MajdataPlay.Types
             Levels = metadata.Levels;
             Hash = metadata.Hash;
             Timestamp = files.FirstOrDefault(x => x.Name is "maidata.txt")?.LastWriteTime ?? DateTime.UnixEpoch;
-            _preloadCallback = async () => { await UniTask.WhenAll(GetMaidataAsync(), GetCoverAsync(true)); };
         }
         public static async Task<SongDetail> ParseAsync(string chartFolder)
         {
@@ -69,7 +73,7 @@ namespace MajdataPlay.Types
 
             return new SongDetail(chartFolder, metadata);
         }
-        public async UniTask PreloadAsync(CancellationToken token = default)
+        public virtual async UniTask PreloadAsync(CancellationToken token = default)
         {
             try
             {
@@ -81,12 +85,12 @@ namespace MajdataPlay.Types
                 await UniTask.Yield();
             }
         }
-        public async UniTask<string> GetVideoPathAsync(CancellationToken token = default)
+        public virtual async UniTask<string> GetVideoPathAsync(CancellationToken token = default)
         {
             await UniTask.Yield();
             return _videoPath;
         }
-        public async UniTask<Sprite> GetCoverAsync(bool isCompressed, CancellationToken token = default)
+        public virtual async UniTask<Sprite> GetCoverAsync(bool isCompressed, CancellationToken token = default)
         {
             try
             {
@@ -105,7 +109,7 @@ namespace MajdataPlay.Types
                 await UniTask.Yield();
             }
         }
-        public async UniTask<AudioSampleWrap> GetAudioTrackAsync(CancellationToken token = default)
+        public virtual async UniTask<AudioSampleWrap> GetAudioTrackAsync(CancellationToken token = default)
         {
             try
             {
@@ -124,7 +128,7 @@ namespace MajdataPlay.Types
                 await UniTask.Yield();
             }
         }
-        public async UniTask<AudioSampleWrap> GetPreviewAudioTrackAsync(CancellationToken token = default)
+        public virtual async UniTask<AudioSampleWrap> GetPreviewAudioTrackAsync(CancellationToken token = default)
         {
             try
             {
@@ -143,7 +147,7 @@ namespace MajdataPlay.Types
                 await UniTask.Yield();
             }
         }
-        public async UniTask<SimaiFile> GetMaidataAsync(bool ignoreCache = false, CancellationToken token = default)
+        public virtual async UniTask<SimaiFile> GetMaidataAsync(bool ignoreCache = false, CancellationToken token = default)
         {
             try
             {

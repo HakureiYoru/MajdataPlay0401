@@ -39,6 +39,15 @@ namespace MajdataPlay.Utils
         public static string LangPath { get; } = Path.Combine(Application.streamingAssetsPath, "Langs");
         public static string ScoreDBPath { get; } = Path.Combine(RootPath, "MajDatabase.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db.db");
         public static string LogPath { get; } = Path.Combine(LogsPath, $"MajPlayRuntime_{DateTime.Now:yyyy-MM-dd_HH_mm_ss}.log");
+        public static string AppDataPath { get; } = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MajdataPlay0401");
+        public static Dictionary<string, bool> ChartUnlockingStatus { get; } = new()
+        {
+            //Hash isUnlocked
+            { "", false },
+            { "", false },
+            { "", false },
+            { "", false },
+        };
         public static Sprite EmptySongCover { get; }
         public static Material BreakMaterial { get; }
         public static Material DefaultMaterial { get; }
@@ -86,6 +95,12 @@ namespace MajdataPlay.Utils
                 Directory.CreateDirectory(netCachePath);
             if (!Directory.Exists(ChartPath))
                 Directory.CreateDirectory(ChartPath);
+            if(!Directory.Exists(AppDataPath))
+                Directory.CreateDirectory(AppDataPath);
+            if(Serializer.Json.TryDeserialize<Dictionary<string, bool>>(Path.Combine(AppDataPath,"0401.json"),out var result) && result is not null)
+            {
+                ChartUnlockingStatus = result;
+            }
             SharedHttpClient.Timeout = TimeSpan.FromMilliseconds(HTTP_TIMEOUT_MS);
         }
         static void CheckAndLoadUserSetting()
