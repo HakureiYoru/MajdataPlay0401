@@ -105,9 +105,13 @@ namespace MajdataPlay.Utils
                     Directory.Delete(Path.Combine(AppDataPath, "0401"), true);
                 ZipFile.ExtractToDirectory(Path.Combine(AssetsPath, "0401.zip"), Path.Combine(AppDataPath, "0401"), true);
             }
-            if(Serializer.Json.TryDeserialize<Dictionary<string, bool>>(File.ReadAllText(Path.Combine(AppDataPath, "0401.json")),out var result) && result is not null)
+            var jspath = Path.Combine(AppDataPath, "0401.json");
+            if (File.Exists(jspath))
             {
-                ChartUnlockingStatus = result;
+                if (Serializer.Json.TryDeserialize<Dictionary<string, bool>>(File.ReadAllText(jspath), out var result) && result is not null)
+                {
+                    ChartUnlockingStatus = result;
+                }
             }
             SharedHttpClient.Timeout = TimeSpan.FromMilliseconds(HTTP_TIMEOUT_MS);
         }
