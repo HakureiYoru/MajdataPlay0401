@@ -31,6 +31,8 @@ namespace MajdataPlay
         public Image[] PassButtonBackground;
         public Text[] PassButtonText;
 
+        public Sprite[] XxlbSprites;
+
         string[] program;
         void Start()
         {
@@ -76,7 +78,7 @@ namespace MajdataPlay
                 }
                 await UniTask.Yield();
             }
-            StoryVideo.Stop();
+            StoryVideo.Pause();
             videosound.Stop();
 
             //we do it old style way so it has that effect
@@ -124,6 +126,10 @@ namespace MajdataPlay
                     SelectionText[0].text = select1[0];
                     SelectionText[1].text = select2[0];
                     bool anykey = false;
+                    MajInstances.LightManager.SetButtonLight(Color.green, 1);
+                    MajInstances.LightManager.SetButtonLight(Color.green, 2);
+                    MajInstances.LightManager.SetButtonLight(Color.green, 5);
+                    MajInstances.LightManager.SetButtonLight(Color.green, 6);
                     while (!anykey)
                     {
                         if (InputManager.CheckButtonStatus(Types.SensorArea.A2, Types.SensorStatus.On) ||
@@ -140,6 +146,7 @@ namespace MajdataPlay
                         }
                         await UniTask.Yield();
                     }
+                    MajInstances.LightManager.SetAllLight(Color.green);
                     HideSelection();
                     continue;
                 }
@@ -153,13 +160,17 @@ namespace MajdataPlay
                 if (parts[1] != "null")
                 {
                     Character.color = new Color(1, 1, 1, 1);
-                    //TODO: switch sprite here
+                    Character.sprite = XxlbSprites[int.Parse(parts[1])];
                 }
 
                 string name = parts[0];
                 string text = parts[2];
                 await PrintText(name, text);
+
                 //waitkey
+                PassButtonBackground[3].color = new Color(1, 1, 1, 1);
+                PassButtonText[3].color = new Color(1, 1, 1, 1);
+                PassButtonText[3].text = ">..";
                 MajInstances.LightManager.SetButtonLight(Color.green, 3);
                 while (!(
                     InputManager.CheckButtonStatus(Types.SensorArea.A4, Types.SensorStatus.On)|| 
@@ -168,6 +179,9 @@ namespace MajdataPlay
                     await UniTask.Yield();
                 }
                 MajInstances.LightManager.SetButtonLight(Color.white, 3);
+                PassButtonBackground[3].color = new Color(1, 1, 1, 0);
+                PassButtonText[3].color = new Color(1, 1, 1, 0);
+                PassButtonText[3].text = "";
             }
 
             var Password = "";
