@@ -2847,6 +2847,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 1fb862582cc252a4ca74e4f291e13f9e, type: 3}
   - {fileID: 21300000, guid: f09dfaa5f4f46174a9b7cd8e2dbd5325, type: 3}
   - {fileID: 21300000, guid: 41ab31f2ce1fdd44d83e307631820fce, type: 3}
+  - {fileID: 21300000, guid: 4a9f12f1e93d9114ab689f2666da68e4, type: 3}
   isAfterStory: 0
 --- !u!1 &2108469571
 GameObject:

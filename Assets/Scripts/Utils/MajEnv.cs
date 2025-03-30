@@ -23,7 +23,7 @@ namespace MajdataPlay.Utils
 {
     public static class MajEnv
     {
-        public const string DO_LOVE_HASH = "bmUnCQYd7lpyrtM+kiHrkA==";
+        public const string DO_LOVE_HASH = "p6aEWfQpN/g1eI2VCPtl/w==";
         public static bool IsStoryMode = false;
         public const int DEFAULT_LAYER = 0;
         public const int HIDDEN_LAYER = 3;

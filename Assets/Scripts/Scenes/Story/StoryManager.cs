@@ -222,7 +222,7 @@ namespace MajdataPlay
                 PassButtonBackground[3].color = new Color(1, 1, 1, 0);
                 PassButtonText[3].text = "";
             }
-
+            HideSelection();
             if (!isAfterStory)
             {
                 var Password = "";
@@ -251,7 +251,7 @@ namespace MajdataPlay
                     {
                         for (int i = 0; i < 8; i++)
                         {
-                            if (InputManager.CheckButtonStatus((Types.SensorArea)i, Types.SensorStatus.On))
+                            if (InputManager.CheckAreaStatus((Types.SensorArea)i, Types.SensorStatus.On))
                             {
                                 pressedkey = i;
                             }
