@@ -113,6 +113,7 @@ namespace MajdataPlay.Game
         bool _isSlideNoTrack = false;
         bool _isTrackSkipAvailable = MajEnv.UserSetting.Game.TrackSkip;
         bool _isFastRetryAvailable = MajEnv.UserSetting.Game.FastRetry;
+        bool _noDoLoveNoExit = false;
         float? _allNotesFinishedTiming = null;
         float _2367PressTime = 0;
         float _3456PressTime = 0;
@@ -153,6 +154,7 @@ namespace MajdataPlay.Game
             //print(MajInstances.GameManager.SelectedIndex);
             _songDetail = _gameInfo.Current;
             HistoryScore = MajInstances.ScoreManager.GetScore(_songDetail, MajInstances.GameManager.SelectedDiff);
+            _noDoLoveNoExit = _songDetail.Hash == MajEnv.DO_LOVE_HASH && HistoryScore.PlayCount == 0;
             _timer = MajTimeline.CreateTimer();
 #if !UNITY_EDITOR
             Cursor.visible = false;
@@ -166,6 +168,8 @@ namespace MajdataPlay.Game
         {
             if (e.IsButton && e.IsDown && e.Type == SensorArea.P1)
             {
+                if (_noDoLoveNoExit)
+                    return;
                 print("Pause!!");
                 BackToList().Forget();
             }
@@ -783,7 +787,9 @@ namespace MajdataPlay.Game
                 return;
             else if (_thisFrameSec < 5f)
                 return;
-            switch(State)
+            else if (_noDoLoveNoExit)
+                return;
+            switch (State)
             {
                 case GamePlayStatus.Running:
                     var _2367 = InputManager.CheckButtonStatus(SensorArea.A2, SensorStatus.On) &&

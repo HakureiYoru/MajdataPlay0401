@@ -67,9 +67,9 @@ namespace MajdataPlay.Types
             Timestamp = files.FirstOrDefault(x => x.Name is "maidata.txt")?.LastWriteTime ?? DateTime.UnixEpoch;
             _preloadCallback = async () => { await UniTask.WhenAll(GetMaidataAsync(), GetCoverAsync(true)); };
             MajDebug.Log(Hash);
-            if(Hash == "bmUnCQYd7lpyrtM+kiHrkA==")
+            if(Hash == MajEnv.DO_LOVE_HASH)
             {
-                IsUnlocked = MajEnv.ChartUnlockingStatus["bmUnCQYd7lpyrtM+kiHrkA=="];
+                IsUnlocked = MajEnv.ChartUnlockingStatus[MajEnv.DO_LOVE_HASH];
                 if(!IsUnlocked)
                 {
                     Title = "???";
