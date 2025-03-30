@@ -202,7 +202,7 @@ namespace MajdataPlay.Utils
                 if(Directory.Exists(Path.Combine(MajEnv.AppDataPath, "0401")))
                 {
                     var c = await GetCollection(Path.Combine(MajEnv.AppDataPath, "0401"));
-                    c.Name = "Story";
+                    c.Name = "MMFC404";
                     collections.Add(c);
                 }
                 return collections.ToArray();

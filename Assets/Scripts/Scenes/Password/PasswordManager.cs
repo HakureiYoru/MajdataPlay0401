@@ -61,6 +61,10 @@ namespace MajdataPlay.Password
         }
         void Update()
         {
+            if (InputManager.IsButtonClickedInThisFrame(SensorArea.P1))
+            {
+                MajInstances.SceneSwitcher.SwitchScene("List");
+            }
             for (var i = 0; i < 8; i++)
             {
                 __[i].text = _[i].ToString();

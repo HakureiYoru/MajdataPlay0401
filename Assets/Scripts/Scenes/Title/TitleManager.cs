@@ -186,8 +186,14 @@ namespace MajdataPlay.Title
             _flag = false;
             MajInstances.AudioManager.StopSFX("bgm_title.mp3");
             MajInstances.AudioManager.StopSFX("MajdataPlay.wav");
-            //TODO: get some datetime judge stuff here
-            MajInstances.SceneSwitcher.SwitchScene("Story", false);
+            if (MajEnv.ChartUnlockingStatus["bmUnCQYd7lpyrtM+kiHrkA=="] == true)
+            {
+                MajInstances.SceneSwitcher.SwitchScene("List", false);
+            }
+            else
+            {
+                MajInstances.SceneSwitcher.SwitchScene("Story", false);
+            }
         }
     }
 }
