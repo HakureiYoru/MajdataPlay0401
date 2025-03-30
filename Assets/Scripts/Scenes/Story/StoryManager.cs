@@ -146,7 +146,7 @@ namespace MajdataPlay
                         }
                         await UniTask.Yield();
                     }
-                    MajInstances.LightManager.SetAllLight(Color.green);
+                    MajInstances.LightManager.SetAllLight(Color.white);
                     HideSelection();
                     continue;
                 }
@@ -169,7 +169,6 @@ namespace MajdataPlay
 
                 //waitkey
                 PassButtonBackground[3].color = new Color(1, 1, 1, 1);
-                PassButtonText[3].color = new Color(1, 1, 1, 1);
                 PassButtonText[3].text = ">..";
                 MajInstances.LightManager.SetButtonLight(Color.green, 3);
                 while (!(
@@ -180,7 +179,6 @@ namespace MajdataPlay
                 }
                 MajInstances.LightManager.SetButtonLight(Color.white, 3);
                 PassButtonBackground[3].color = new Color(1, 1, 1, 0);
-                PassButtonText[3].color = new Color(1, 1, 1, 0);
                 PassButtonText[3].text = "";
             }
 
