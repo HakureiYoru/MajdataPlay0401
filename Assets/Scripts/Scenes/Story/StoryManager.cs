@@ -82,9 +82,16 @@ namespace MajdataPlay
                 var videosound = MajInstances.AudioManager.GetSFX("story.mp3");
                 videosound.Play();
                 StoryVideo.Play();
+                if (MajInstances.Setting.Misc.AllowStorySkip)
+                {
+                    PassButtonBackground[4].color = new Color(1, 1, 1, 1);
+                    PassButtonText[4].text = "跳过";
+                }
+                
                 while (videosound.CurrentSec < videosound.Length.TotalSeconds - 0.1)
                 {
-                    if (InputManager.CheckButtonStatus(Types.SensorArea.P1, Types.SensorStatus.On))
+                    if (InputManager.CheckButtonStatus(Types.SensorArea.A5, Types.SensorStatus.On)
+                        &&MajInstances.Setting.Misc.AllowStorySkip)
                     {
                         break;
                     }
@@ -102,6 +109,9 @@ namespace MajdataPlay
                 Destroy(StoryVideo.gameObject);
                 MajDebug.Log("VideoOver");
                 videosound.Stop();
+                PassButtonBackground[4].color = new Color(1, 1, 1, 0);
+                PassButtonText[4].text = "";
+                MajInstances.Setting.Misc.AllowStorySkip = true;
             }
             var bgm = MajInstances.AudioManager.GetSFX("bgm_story.mp3");
             bgm.IsLoop = true;
@@ -118,15 +128,19 @@ namespace MajdataPlay
             NameWindow.color = new Color(1, 1, 1, 0.8f);
 
 
-            
+
             for (int pc = 0; pc < program.Length; pc++)
             {
+                PassButtonBackground[4].color = new Color(1, 1, 1, 1);
+                PassButtonText[4].text = ">>>";
+
                 var line = program[pc];
                 var parts = line.Split("|");
 
                 if (line == "") continue;
                 if (line.StartsWith("选项"))
                 {
+                    HideSelection();
                     var select1 = parts[1].Split("=");
                     var select2 = parts[2].Split("=");
                     for (float i = 1; i > 0; i = i - 0.0625f)
@@ -144,14 +158,24 @@ namespace MajdataPlay
                     MajInstances.LightManager.SetButtonLight(Color.green, 6);
                     while (!anykey)
                     {
-                        if (InputManager.CheckButtonStatus(Types.SensorArea.A2, Types.SensorStatus.On) ||
-                            InputManager.CheckButtonStatus(Types.SensorArea.A7, Types.SensorStatus.On))
+                        if (
+                            InputManager.CheckAreaStatus(Types.SensorArea.A2, Types.SensorStatus.On)||
+                            InputManager.CheckAreaStatus(Types.SensorArea.A7, Types.SensorStatus.On) ||
+                            InputManager.CheckSensorStatus(Types.SensorArea.B2, Types.SensorStatus.On) ||
+                            InputManager.CheckSensorStatus(Types.SensorArea.B7, Types.SensorStatus.On) ||
+                            InputManager.CheckSensorStatus(Types.SensorArea.B8, Types.SensorStatus.On) ||
+                            InputManager.CheckSensorStatus(Types.SensorArea.B1, Types.SensorStatus.On))
                         {
                             pc = int.Parse(select1[1]) - 1;
                             anykey = true;
                         }
-                        if (InputManager.CheckButtonStatus(Types.SensorArea.A3, Types.SensorStatus.On) ||
-                            InputManager.CheckButtonStatus(Types.SensorArea.A6, Types.SensorStatus.On))
+                        if (
+                            InputManager.CheckAreaStatus(Types.SensorArea.A3, Types.SensorStatus.On) ||
+                            InputManager.CheckAreaStatus(Types.SensorArea.A6, Types.SensorStatus.On) ||
+                            InputManager.CheckSensorStatus(Types.SensorArea.B3, Types.SensorStatus.On) ||
+                            InputManager.CheckSensorStatus(Types.SensorArea.B6, Types.SensorStatus.On) ||
+                            InputManager.CheckSensorStatus(Types.SensorArea.B4, Types.SensorStatus.On) ||
+                            InputManager.CheckSensorStatus(Types.SensorArea.B5, Types.SensorStatus.On))
                         {
                             pc = int.Parse(select2[1]) - 1;
                             anykey = true;
@@ -190,7 +214,7 @@ namespace MajdataPlay
                 MajInstances.LightManager.SetButtonLight(Color.green, 3);
                 while (!(
                     InputManager.CheckButtonStatus(Types.SensorArea.A4, Types.SensorStatus.On)|| 
-                    InputManager.CheckButtonStatus(Types.SensorArea.P1, Types.SensorStatus.On)))
+                    InputManager.CheckButtonStatus(Types.SensorArea.A5, Types.SensorStatus.On)))
                 {
                     await UniTask.Yield();
                 }
@@ -262,7 +286,7 @@ namespace MajdataPlay
                 }
 
                 DialogText.text += text[i];
-                if (!InputManager.CheckButtonStatus(Types.SensorArea.P1, Types.SensorStatus.On))
+                if (!InputManager.CheckButtonStatus(Types.SensorArea.A5, Types.SensorStatus.On))
                 {
                     if (name == "小小蓝白")
                     {
@@ -280,7 +304,10 @@ namespace MajdataPlay
                 }
                 
             }
-            await UniTask.Delay(200);
+            if (!InputManager.CheckButtonStatus(Types.SensorArea.A5, Types.SensorStatus.On))
+            {
+                await UniTask.Delay(200);
+            }
         }
 
         async UniTask XxlbSays(char text)
