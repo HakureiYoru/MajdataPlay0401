@@ -16,7 +16,7 @@ namespace MajdataPlay
 {
     public class StoryManager : MonoBehaviour
     {
-        public static string Password { get; private set; } = "12345678";
+        public static string Password { get; private set; } = "114514";
         public VideoPlayer StoryVideo;
         public VideoPlayer NukeVideo;
         public SpriteRenderer VideoRender;
@@ -212,7 +212,7 @@ namespace MajdataPlay
                 await UniTask.Delay(200);
             }
             StoryManager.Password = Password;
-            print(Password);
+            //print(Password);
             bgm.Stop();
             MajInstances.SceneSwitcher.SwitchScene("List", false);
         }

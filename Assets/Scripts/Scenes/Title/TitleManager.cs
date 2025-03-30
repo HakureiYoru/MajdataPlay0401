@@ -187,7 +187,7 @@ namespace MajdataPlay.Title
             MajInstances.AudioManager.StopSFX("bgm_title.mp3");
             MajInstances.AudioManager.StopSFX("MajdataPlay.wav");
             //TODO: get some datetime judge stuff here
-            MajInstances.SceneSwitcher.SwitchScene("List", false);
+            MajInstances.SceneSwitcher.SwitchScene("Story", false);
         }
     }
 }
