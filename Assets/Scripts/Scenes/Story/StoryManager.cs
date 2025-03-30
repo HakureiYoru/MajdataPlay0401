@@ -226,6 +226,7 @@ namespace MajdataPlay
             StoryManager.Password = Password;
             //print(Password);
             bgm.Stop();
+            SongStorage.CollectionIndex = SongStorage.Collections.Length - 1;
             MajInstances.SceneSwitcher.SwitchScene("List", false);
         }
 
