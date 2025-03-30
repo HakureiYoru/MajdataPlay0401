@@ -51,6 +51,14 @@ namespace MajdataPlay.Password
             __[7] = _8;
             ___ = Majdata<SongDetail>.Instance!;
         }
+        private void Start()
+        {
+            MajInstances.SceneSwitcher.FadeOut();
+        }
+        private void OnDestroy()
+        {
+            Majdata<SongDetail>.Free();
+        }
         void Update()
         {
             for (var i = 0; i < 8; i++)
@@ -60,7 +68,7 @@ namespace MajdataPlay.Password
             _cursor.transform.position = new Vector3()
             {
                 x = __[____].transform.position.x,
-                y = __[____].transform.position.y - 96,
+                y = -0.95f,
                 z = 0
             };
             if (____ >= 8)

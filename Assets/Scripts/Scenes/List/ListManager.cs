@@ -171,7 +171,10 @@ namespace MajdataPlay.List
                                 var selectedSong = _coverListDisplayer.SelectedSong;
                                 if (selectedSong is SongDetail sd && !sd.IsUnlocked)
                                 {
-                                    MajInstances.SceneSwitcher.SwitchScene("Unlock", false);
+                                    _pressTime = 0;
+                                    _isPressed = false;
+                                    Majdata<SongDetail>.Instance = sd;
+                                    MajInstances.SceneSwitcher.SwitchScene("Password", false);
                                     return;
                                 }
                                 InputManager.UnbindAnyArea(OnAreaDown);

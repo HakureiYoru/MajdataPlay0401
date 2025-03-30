@@ -31,8 +31,6 @@ namespace MajdataPlay.Types
         protected readonly string _videoPath = string.Empty;
         protected readonly string _coverPath = string.Empty;
 
-        protected readonly string _pAssWoRd = string.Empty;
-
         protected AudioSampleWrap? _audioTrack = null;
         protected AudioSampleWrap? _previewAudioTrack = null;
         protected Sprite? _cover = null;
@@ -48,14 +46,6 @@ namespace MajdataPlay.Types
 
         readonly SimaiMetadata _metadata;
 
-        readonly static IReadOnlyDictionary<string, string> _pAssWoRdSsssssssssssSSSSSSSssssssssssssss = new Dictionary<string, string>()
-        {
-            //Hash Passwd
-            { "sb0", "0bs" },
-            { "sb1", "1bs" },
-            { "sb2", "2bs" },
-            { "sb3", "3bs" },
-        };
         public SongDetail(string chartFolder, SimaiMetadata metadata)
         {
             var files = new DirectoryInfo(chartFolder).GetFiles();
@@ -76,11 +66,10 @@ namespace MajdataPlay.Types
             Hash = metadata.Hash;
             Timestamp = files.FirstOrDefault(x => x.Name is "maidata.txt")?.LastWriteTime ?? DateTime.UnixEpoch;
             _preloadCallback = async () => { await UniTask.WhenAll(GetMaidataAsync(), GetCoverAsync(true)); };
-
-            if(MajEnv.ChartUnlockingStatus.TryGetValue(Hash,out var isUnlocked))
+            MajDebug.Log(Hash);
+            if(Hash == "bmUnCQYd7lpyrtM+kiHrkA==")
             {
-                IsUnlocked = isUnlocked;
-                _pAssWoRd = _pAssWoRdSsssssssssssSSSSSSSssssssssssssss[Hash];
+                IsUnlocked = MajEnv.ChartUnlockingStatus["bmUnCQYd7lpyrtM+kiHrkA=="];
                 if(!IsUnlocked)
                 {
                     Title = "???";
@@ -223,7 +212,7 @@ namespace MajdataPlay.Types
                 Levels = _metadata.Levels;
                 return true;
             }
-            else if (passwd == _pAssWoRd)
+            else if (passwd == StoryManager.Password)
             {
                 IsUnlocked = true;
                 MajEnv.ChartUnlockingStatus[Hash] = true;

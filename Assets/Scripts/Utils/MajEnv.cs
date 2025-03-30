@@ -44,10 +44,7 @@ namespace MajdataPlay.Utils
         public static Dictionary<string, bool> ChartUnlockingStatus { get; } = new()
         {
             //Hash isUnlocked
-            { "0", false },
-            { "1", false },
-            { "2", false },
-            { "3", false },
+            { "bmUnCQYd7lpyrtM+kiHrkA==", false },
         };
         public static Sprite EmptySongCover { get; }
         public static Sprite LockedSongCover { get; }
