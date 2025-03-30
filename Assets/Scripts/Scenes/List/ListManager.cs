@@ -250,6 +250,7 @@ namespace MajdataPlay.List
                         case SensorArea.A5:
                             if (_coverListDisplayer.IsChartList)
                             {
+                                if (MajEnv.IsStoryMode) return;
                                 await _coverListDisplayer.SwitchToDirListAsync();
                                 MajInstances.LightManager.SetButtonLight(Color.white, 4);
                                 SongStorage.WorkingCollection.Index = 0;

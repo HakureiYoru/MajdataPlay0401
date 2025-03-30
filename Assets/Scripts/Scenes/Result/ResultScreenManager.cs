@@ -60,6 +60,8 @@ namespace MajdataPlay.Result
 
         UniTask OnlineSaveTask = UniTask.Delay(0);
 
+        ISongDetail _songDetail;
+
         void Start()
         {
             rank.text = "";
@@ -71,6 +73,7 @@ namespace MajdataPlay.Result
 
             var totalJudgeRecord = JudgeDetail.UnpackJudgeRecord(result.JudgeRecord.TotalJudgeInfo);
             var song = result.SongDetail;
+            _songDetail = song;
             var historyResult = MajInstances.ScoreManager.GetScore(song, gameManager.SelectedDiff);
 
             var intractSender = GetComponent<OnlineInteractionSender>();
@@ -271,7 +274,15 @@ namespace MajdataPlay.Result
                         }
                         InputManager.UnbindAnyArea(OnAreaDown);
                         MajInstances.AudioManager.StopSFX("bgm_result.mp3");
-                        MajInstances.SceneSwitcher.SwitchScene("List", false);
+                        if (MajEnv.IsStoryMode && _songDetail.Hash== MajEnv.DO_LOVE_HASH)
+                        {
+                            MajEnv.IsStoryMode = false;
+                            MajInstances.SceneSwitcher.SwitchScene("AfterStory", false);
+                        }
+                        else
+                        {
+                            MajInstances.SceneSwitcher.SwitchScene("List", false);
+                        }
                         return;
                     case SensorArea.A5:
                         favoriteAdder.FavoratePressed();

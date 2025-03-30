@@ -188,10 +188,12 @@ namespace MajdataPlay.Title
             MajInstances.AudioManager.StopSFX("MajdataPlay.wav");
             if (MajEnv.ChartUnlockingStatus[MajEnv.DO_LOVE_HASH] == true)
             {
+                MajEnv.IsStoryMode = false;
                 MajInstances.SceneSwitcher.SwitchScene("List", false);
             }
             else
             {
+                MajEnv.IsStoryMode = true;
                 MajInstances.SceneSwitcher.SwitchScene("Story", false);
             }
         }

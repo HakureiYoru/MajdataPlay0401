@@ -24,6 +24,7 @@ namespace MajdataPlay.Utils
     public static class MajEnv
     {
         public const string DO_LOVE_HASH = "bmUnCQYd7lpyrtM+kiHrkA==";
+        public static bool IsStoryMode = false;
         public const int DEFAULT_LAYER = 0;
         public const int HIDDEN_LAYER = 3;
         public const int HTTP_BUFFER_SIZE = 8192;

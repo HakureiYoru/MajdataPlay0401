@@ -16,7 +16,7 @@ namespace MajdataPlay
 {
     public class StoryManager : MonoBehaviour
     {
-        public static string Password { get; private set; } = "114514";
+        public static string Password { get; private set; } = "11112222";
         public VideoPlayer StoryVideo;
         public VideoPlayer NukeVideo;
         public SpriteRenderer VideoRender;
@@ -34,6 +34,8 @@ namespace MajdataPlay
 
         public Sprite[] XxlbSprites;
 
+        public bool isAfterStory;
+
         string[] program;
         void Start()
         {
@@ -42,7 +44,14 @@ namespace MajdataPlay
             Character.color = new Color(1, 1, 1, 0);
             DialogWindow.color = new Color(1, 1, 1, 0);
             NameWindow.color = new Color(1, 1, 1, 0);
-            program = File.ReadAllLines(Application.streamingAssetsPath + "/story.txt");
+            if (isAfterStory)
+            {
+                program = File.ReadAllLines(Application.streamingAssetsPath + "/after_story.txt");
+            }
+            else
+            {
+                program = File.ReadAllLines(Application.streamingAssetsPath + "/story.txt");
+            }      
             NukeVideo.gameObject.SetActive(false);
             HideSelection();
             start().Forget();
@@ -68,30 +77,32 @@ namespace MajdataPlay
             await UniTask.Delay(100);
             
             MajInstances.SceneSwitcher.FadeOut();
-            var videosound = MajInstances.AudioManager.GetSFX("story.mp3");
-            videosound.Play();
-            StoryVideo.Play();
-            while (videosound.CurrentSec < videosound.Length.TotalSeconds - 0.1)
+            if (!isAfterStory)
             {
-                if (InputManager.CheckButtonStatus(Types.SensorArea.P1, Types.SensorStatus.On))
+                var videosound = MajInstances.AudioManager.GetSFX("story.mp3");
+                videosound.Play();
+                StoryVideo.Play();
+                while (videosound.CurrentSec < videosound.Length.TotalSeconds - 0.1)
                 {
-                    break;
+                    if (InputManager.CheckButtonStatus(Types.SensorArea.P1, Types.SensorStatus.On))
+                    {
+                        break;
+                    }
+                    await UniTask.Yield();
                 }
-                await UniTask.Yield();
-            }
-            StoryVideo.Pause();
-            videosound.Stop();
+                StoryVideo.Pause();
+                videosound.Stop();
 
-            //we do it old style way so it has that effect
-            for (float i = 1; i > 0; i = i - 0.0625f)
-            {
-                VideoRender.color = new Color(1, 1, 1, i);
-                await UniTask.Delay(120);
+                //we do it old style way so it has that effect
+                for (float i = 1; i > 0; i = i - 0.0625f)
+                {
+                    VideoRender.color = new Color(1, 1, 1, i);
+                    await UniTask.Delay(120);
+                }
+                Destroy(StoryVideo.gameObject);
+                MajDebug.Log("VideoOver");
+                videosound.Stop();
             }
-            Destroy(StoryVideo.gameObject);
-            MajDebug.Log("VideoOver");
-            videosound.Stop();
-
             var bgm = MajInstances.AudioManager.GetSFX("bgm_story.mp3");
             bgm.IsLoop = true;
             bgm.Play();
@@ -157,6 +168,11 @@ namespace MajdataPlay
                     Application.Quit();
                     return;
                 }
+                if (line.StartsWith("TOUCHRGB"))
+                {
+                    Character.gameObject.GetComponent<Animator>().SetTrigger("rgb");
+                    continue;
+                }
 
                 if (parts[1] != "null")
                 {
@@ -183,47 +199,50 @@ namespace MajdataPlay
                 PassButtonText[3].text = "";
             }
 
-            var Password = "";
-            for (int j = 0; j < 8; j++)
+            if (!isAfterStory)
             {
-                var thiskey = Random.Range(0, 8);
-                Password += thiskey + 1;
-                await PrintText("小小蓝白", "一定要通关哦？", 30);
-                for (float i = 1; i > 0; i = i - 0.0625f)
+                var Password = "";
+                for (int j = 0; j < 8; j++)
                 {
+                    var thiskey = Random.Range(0, 8);
+                    Password += thiskey + 1;
+                    await PrintText("小小蓝白", "一定要通关哦？", 30);
+                    for (float i = 1; i > 0; i = i - 0.0625f)
+                    {
+                        for (int k = 0; k < PassButtonBackground.Length; k++)
+                        {
+                            PassButtonBackground[k].color = new Color(1, 1, 1, 1 - i);
+                            PassButtonText[k].color = new Color(PassButtonText[k].color.r, PassButtonText[k].color.g, PassButtonText[k].color.b, 1 - i);
+                            PassButtonText[k].text = Random.Range(0, 2) == 1 ? "不好" : "好";
+                        }
+                        await UniTask.Delay(120);
+                    }
                     for (int k = 0; k < PassButtonBackground.Length; k++)
                     {
-                        PassButtonBackground[k].color = new Color(1, 1, 1, 1-i);
-                        PassButtonText[k].color = new Color(PassButtonText[k].color.r, PassButtonText[k].color.g, PassButtonText[k].color.b, 1 - i);
-                        PassButtonText[k].text = Random.Range(0, 2)==1?"不好": "好";
+                        PassButtonText[k].text = "不好";
                     }
-                    await UniTask.Delay(120);
-                }
-                for (int k = 0; k < PassButtonBackground.Length; k++)
-                {
-                    PassButtonText[k].text = "不好";
-                }
-                PassButtonText[thiskey].text = "好";
-                var pressedkey = -1;
-                while (pressedkey == -1)
-                {
-                    for (int i = 0; i < 8; i++)
+                    PassButtonText[thiskey].text = "好";
+                    var pressedkey = -1;
+                    while (pressedkey == -1)
                     {
-                        if (InputManager.CheckButtonStatus((Types.SensorArea)i, Types.SensorStatus.On))
+                        for (int i = 0; i < 8; i++)
                         {
-                            pressedkey = i;
+                            if (InputManager.CheckButtonStatus((Types.SensorArea)i, Types.SensorStatus.On))
+                            {
+                                pressedkey = i;
+                            }
                         }
+                        await UniTask.Yield();
                     }
-                    await UniTask.Yield();
+                    if (pressedkey != thiskey)
+                    {
+                        await Nuke();
+                        Application.Quit();
+                    }
+                    await UniTask.Delay(200);
                 }
-                if(pressedkey != thiskey)
-                {
-                    await Nuke();
-                    Application.Quit();
-                }
-                await UniTask.Delay(200);
+                StoryManager.Password = Password;
             }
-            StoryManager.Password = Password;
             //print(Password);
             bgm.Stop();
             SongStorage.CollectionIndex = SongStorage.Collections.Length - 1;

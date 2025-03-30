@@ -44,4 +44,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Password.unity
     guid: 01ca23f33e2473a42a95e4380fd0278d
+  - enabled: 1
+    path: Assets/Scenes/AfterStory.unity
+    guid: 92718e443326b9f41b88ca561926661a
   m_configObjects: {}
