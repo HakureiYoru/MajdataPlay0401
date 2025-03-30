@@ -128,10 +128,10 @@ namespace MajdataPlay.Types
                 using (await _coverLock.LockAsync(token))
                 {
                     token.ThrowIfCancellationRequested();
-                    if (_cover is not null)
-                        return _cover;
-                    else if (!IsUnlocked)
+                    if (!IsUnlocked)
                         return MajEnv.LockedSongCover;
+                    else if (_cover is not null)
+                        return _cover;
 
                     _cover = await SpriteLoader.LoadAsync(_coverPath, token);
                     return _cover;

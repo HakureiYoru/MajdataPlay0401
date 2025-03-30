@@ -67,7 +67,7 @@ namespace MajdataPlay.Password
             }
             _cursor.transform.position = new Vector3()
             {
-                x = __[____].transform.position.x,
+                x = __[____.Clamp(0, 7)].transform.position.x,
                 y = -0.95f,
                 z = 0
             };
