@@ -186,7 +186,7 @@ namespace MajdataPlay.Title
             _flag = false;
             MajInstances.AudioManager.StopSFX("bgm_title.mp3");
             MajInstances.AudioManager.StopSFX("MajdataPlay.wav");
-            if (MajEnv.ChartUnlockingStatus["bmUnCQYd7lpyrtM+kiHrkA=="] == true)
+            if (MajEnv.ChartUnlockingStatus[MajEnv.DO_LOVE_HASH] == true)
             {
                 MajInstances.SceneSwitcher.SwitchScene("List", false);
             }
